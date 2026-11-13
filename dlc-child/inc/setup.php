@@ -57,10 +57,13 @@ function dlc_setup_footer_text() {
 			$links[] = '<a href="' . esc_url( (string) get_permalink( $id ) ) . '">' . $label . '</a>';
 		}
 	}
-	$links[] = '<span dir="rtl">طراح و توسعه‌دهنده: <span dir="ltr">Mohamadreza Lak</span></span>';
 
 	// span های dir برای این است که ترتیب تکه‌های فارسی و انگلیسی در یک خط به هم نریزد.
-	return '<span dir="rtl"><span dir="ltr">[copyright] [current_year] [site_title]</span> | ' . implode( ' | ', $links ) . '</span>';
+	$text = '<span dir="rtl"><span dir="ltr">[copyright] [current_year] [site_title]</span>';
+	if ( $links ) {
+		$text .= ' | ' . implode( ' | ', $links );
+	}
+	return $text . '</span>';
 }
 
 /**
@@ -73,7 +76,8 @@ function dlc_setup_footer_is_ours( $text ) {
 	$text = trim( (string) $text );
 	return '' === $text
 		|| false !== strpos( $text, '[theme_author]' )
-		|| false !== strpos( $text, 'Mohamadreza Lak' );
+		|| false !== strpos( $text, 'Mohamadreza Lak' )
+		|| 0 === strpos( $text, '<span dir="rtl"><span dir="ltr">[copyright]' );
 }
 
 /**

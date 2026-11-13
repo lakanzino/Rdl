@@ -328,3 +328,10 @@ h1, h2, h3, h4, h5, h6,
 		justify-content: center;
 	}
 }
+
+/* ───── اعتبار طراح در «درباره ما» ───── */
+.dlc-credit {
+	margin-top: 2.5rem;
+	font-size: 0.8rem;
+	opacity: 0.7;
+}
