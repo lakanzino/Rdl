@@ -15,6 +15,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 const DLC_SETUP_PAGE = 'dlc-child-setup';
 const DLC_SEED_META  = '_dlc_seed';
+const DLC_SEED_REV   = '_dlc_seed_rev';
+
+/**
+ * نسخه‌ی محتوای اولیه. با بالا رفتن این عدد، راه‌اندازی یک‌بار به‌طور خودکار
+ * در پیشخوان اجرا می‌شود (ساخت برگه‌های تازه و جایگزینی مواردی که rev بالاتر دارند).
+ */
+const DLC_SEED_VERSION = '2';
 
 /**
  * پالت رنگ سایت به ترتیب ۹ خانه‌ی پالت سراسری آسترا.
@@ -37,23 +44,75 @@ function dlc_setup_palette() {
  * متن پاورقی.
  */
 function dlc_setup_footer_text() {
-	return '[copyright] [current_year] [site_title] | مدیریت سایت: Younes Delfan | طراح و توسعه‌دهنده: Mohamadreza Lak';
+	$links = array();
+	foreach (
+		array(
+			'privacy' => 'حریم خصوصی',
+			'terms'   => 'قوانین و مقررات',
+			'faq'     => 'پرسش‌های متداول',
+		) as $key => $label
+	) {
+		$id = dlc_setup_find( $key );
+		if ( $id && 'publish' === get_post_status( $id ) ) {
+			$links[] = '<a href="' . esc_url( (string) get_permalink( $id ) ) . '">' . $label . '</a>';
+		}
+	}
+
+	// span های dir برای این است که ترتیب تکه‌های فارسی و انگلیسی در یک خط به هم نریزد.
+	$text = '<span dir="rtl"><span dir="ltr">[copyright] [current_year] [site_title]</span>';
+	if ( $links ) {
+		$text .= ' | ' . implode( ' | ', $links );
+	}
+	return $text . '</span>';
 }
 
 /**
- * فهرست محتوای اولیه.
+ * آیا متن فعلی پاورقی را خود این قالب نوشته (یا هنوز پیش‌فرض آستراست)؟
+ * فقط در این صورت اجازه داریم به‌طور خودکار جایگزینش کنیم.
+ *
+ * @param string $text متن فعلی.
+ */
+function dlc_setup_footer_is_ours( $text ) {
+	$text = trim( (string) $text );
+	return '' === $text
+		|| false !== strpos( $text, '[theme_author]' )
+		|| false !== strpos( $text, 'Mohamadreza Lak' )
+		|| 0 === strpos( $text, '<span dir="rtl"><span dir="ltr">[copyright]' );
+}
+
+/**
+ * نوشتن متن پاورقی در تنظیمات آسترا.
+ */
+function dlc_setup_write_footer() {
+	$settings = get_option( 'astra-settings', array() );
+	if ( ! is_array( $settings ) ) {
+		$settings = array();
+	}
+	$settings['footer-copyright-editor'] = dlc_setup_footer_text();
+	update_option( 'astra-settings', $settings );
+}
+
+/**
+ * فهرست محتوای اولیه: نوع، عنوان، نامک، فایل محتوا، شماره‌ی بازنگری (rev).
+ *
+ * اگر rev یک مورد از rev ذخیره‌شده روی سایت بالاتر باشد، محتوای آن برگه با
+ * نسخه‌ی تازه جایگزین می‌شود (نسخه‌ی قبلی در «رونوشت‌ها»ی برگه می‌ماند).
+ * rev را فقط وقتی بالا ببرید که جایگزینی واقعاً خواسته شده باشد.
  */
 function dlc_setup_items() {
 	return array(
-		'front'           => array( 'page', 'صفحه نخست', 'home', 'front' ),
-		'courses'         => array( 'page', 'دوره‌ها و برنامه‌ی آموزشی', 'courses', 'courses' ),
-		'blog'            => array( 'page', 'مقالات', 'blog', '' ),
-		'about'           => array( 'page', 'درباره ما', 'about', 'about' ),
-		'contact'         => array( 'page', 'تماس با ما', 'contact', 'contact' ),
-		'post-start'      => array( 'post', 'یادگیری زبان انگلیسی را از کجا شروع کنیم؟', 'how-to-start-learning-english', 'post-start' ),
-		'post-speaking'   => array( 'post', '۵ عادت روزانه برای تقویت مکالمه‌ی انگلیسی', 'daily-habits-for-english-speaking', 'post-speaking' ),
-		'post-vocabulary' => array( 'post', 'چطور لغت‌های انگلیسی را فراموش نکنیم؟', 'how-to-remember-english-vocabulary', 'post-vocabulary' ),
-		'post-levels'     => array( 'post', 'سطح‌های زبان انگلیسی از A1 تا C2 به زبان ساده', 'english-levels-cefr', 'post-levels' ),
+		'front'           => array( 'page', 'صفحه نخست', 'home', 'front', 2 ),
+		'courses'         => array( 'page', 'دوره‌ها و برنامه‌ی آموزشی', 'courses', 'courses', 1 ),
+		'blog'            => array( 'page', 'مقالات', 'blog', '', 1 ),
+		'about'           => array( 'page', 'درباره ما', 'about', 'about', 2 ),
+		'contact'         => array( 'page', 'تماس با ما', 'contact', 'contact', 2 ),
+		'faq'             => array( 'page', 'پرسش‌های متداول', 'faq', 'faq', 1 ),
+		'privacy'         => array( 'page', 'سیاست حفظ حریم خصوصی', 'privacy', 'privacy', 1 ),
+		'terms'           => array( 'page', 'قوانین و مقررات', 'terms', 'terms', 1 ),
+		'post-start'      => array( 'post', 'یادگیری زبان انگلیسی را از کجا شروع کنیم؟', 'how-to-start-learning-english', 'post-start', 1 ),
+		'post-speaking'   => array( 'post', '۵ عادت روزانه برای تقویت مکالمه‌ی انگلیسی', 'daily-habits-for-english-speaking', 'post-speaking', 1 ),
+		'post-vocabulary' => array( 'post', 'چطور لغت‌های انگلیسی را فراموش نکنیم؟', 'how-to-remember-english-vocabulary', 'post-vocabulary', 1 ),
+		'post-levels'     => array( 'post', 'سطح‌های زبان انگلیسی از A1 تا C2 به زبان ساده', 'english-levels-cefr', 'post-levels', 1 ),
 	);
 }
 
@@ -95,7 +154,13 @@ function dlc_setup_content( $file, $ids ) {
 		return '';
 	}
 	$html = (string) file_get_contents( $path ); // phpcs:ignore WordPress.WP.AlternativeFunctions
-	foreach ( array( 'courses', 'contact', 'blog', 'about' ) as $key ) {
+	foreach ( array( 'courses', 'contact', 'blog', 'about', 'faq', 'privacy', 'terms' ) as $key ) {
+		if ( false === strpos( $html, '{{url:' . $key . '}}' ) ) {
+			continue;
+		}
+		if ( empty( $ids[ $key ] ) ) {
+			$ids[ $key ] = dlc_setup_find( $key );
+		}
 		$url  = ! empty( $ids[ $key ] ) ? get_permalink( $ids[ $key ] ) : home_url( '/' );
 		$html = str_replace( '{{url:' . $key . '}}', esc_url( $url ), $html );
 	}
@@ -112,6 +177,7 @@ function dlc_setup_create_content( &$log ) {
 	$items   = dlc_setup_items();
 	$ids     = array();
 	$created = array();
+	$replace = array();
 	$author  = get_current_user_id();
 
 	// گام اول: ساخت پوسته‌ی موارد تا نشانی‌شان مشخص شود.
@@ -121,7 +187,12 @@ function dlc_setup_create_content( &$log ) {
 		$existing                    = dlc_setup_find( $key );
 		if ( $existing ) {
 			$ids[ $key ] = $existing;
-			$log[]       = 'از قبل وجود داشت و دست نخورد: ' . $title;
+			$stored_rev  = max( 1, (int) get_post_meta( $existing, DLC_SEED_REV, true ) );
+			if ( $item[4] > $stored_rev && 'trash' !== get_post_status( $existing ) ) {
+				$replace[ $key ] = $existing;
+			} else {
+				$log[] = 'از قبل وجود داشت و دست نخورد: ' . $title;
+			}
 			continue;
 		}
 		++$n;
@@ -146,6 +217,7 @@ function dlc_setup_create_content( &$log ) {
 			continue;
 		}
 		update_post_meta( $id, DLC_SEED_META, $key );
+		update_post_meta( $id, DLC_SEED_REV, $item[4] );
 		$ids[ $key ]     = (int) $id;
 		$created[ $key ] = (int) $id;
 		$log[]           = 'ساخته شد: ' . $title;
@@ -164,6 +236,46 @@ function dlc_setup_create_content( &$log ) {
 				)
 			);
 		}
+	}
+
+	// موارد قدیمی که نسخه‌ی تازه‌تری دارند: محتوا جایگزین می‌شود، نسخه‌ی قبلی در رونوشت‌ها می‌ماند.
+	foreach ( $replace as $key => $id ) {
+		$content = dlc_setup_content( $items[ $key ][3], $ids );
+		if ( '' === $content ) {
+			continue;
+		}
+		$result = wp_update_post(
+			wp_slash(
+				array(
+					'ID'           => $id,
+					'post_content' => $content,
+				)
+			),
+			true
+		);
+		if ( is_wp_error( $result ) ) {
+			$log[] = 'خطا در به‌روزرسانی «' . $items[ $key ][1] . '»: ' . $result->get_error_message();
+			continue;
+		}
+		update_post_meta( $id, DLC_SEED_REV, $items[ $key ][4] );
+		$log[] = 'با نسخه‌ی تازه جایگزین شد: ' . $items[ $key ][1];
+	}
+
+	// برگه‌ی حریم خصوصیِ وردپرس: اگر برگه‌ی منتشرشده‌ای برایش تعیین نشده، برگه‌ی ما تعیین شود.
+	if ( ! empty( $ids['privacy'] ) && 'publish' === get_post_status( $ids['privacy'] ) ) {
+		$current = (int) get_option( 'wp_page_for_privacy_policy' );
+		if ( ! $current || 'publish' !== get_post_status( $current ) ) {
+			update_option( 'wp_page_for_privacy_policy', $ids['privacy'] );
+			$log[] = 'برگه‌ی «سیاست حفظ حریم خصوصی» در تنظیمات ← حریم خصوصی ثبت شد.';
+		}
+	}
+
+	// پاورقی: اگر متن فعلی را خودمان نوشته‌ایم، با پیوند برگه‌های تازه به‌روز شود.
+	$astra_settings = get_option( 'astra-settings', array() );
+	$footer_now     = is_array( $astra_settings ) && isset( $astra_settings['footer-copyright-editor'] ) ? $astra_settings['footer-copyright-editor'] : '';
+	if ( dlc_setup_footer_is_ours( $footer_now ) && dlc_setup_footer_text() !== $footer_now ) {
+		dlc_setup_write_footer();
+		$log[] = 'متن پاورقی به‌روز شد.';
 	}
 
 	// صفحه‌ی نخست: تمام‌عرض، بدون عنوان و بدون ستون کناری (تنظیمات برگه در آسترا).
@@ -281,12 +393,12 @@ function dlc_setup_design( &$log ) {
 	if ( ! is_array( $settings ) ) {
 		$settings = array();
 	}
-	$settings['global-color-palette']    = array( 'palette' => $palette );
-	$settings['footer-copyright-editor'] = dlc_setup_footer_text();
+	$settings['global-color-palette'] = array( 'palette' => $palette );
 	update_option( 'astra-settings', $settings );
+	dlc_setup_write_footer();
 
 	$log[] = 'پالت رنگ DLC در «سفارشی‌سازی ← سراسری ← رنگ‌ها» (پالت ۱) ثبت و فعال شد.';
-	$log[] = 'متن پاورقی (مدیریت سایت و طراح) ثبت شد.';
+	$log[] = 'متن پاورقی ثبت شد.';
 }
 
 /**
@@ -324,11 +436,87 @@ function dlc_setup_handle() {
 		$log[] = 'هیچ گزینه‌ای انتخاب نشده بود.';
 	}
 
+	update_option( 'dlc_seed_version', DLC_SEED_VERSION );
 	set_transient( 'dlc_setup_log_' . get_current_user_id(), $log, 5 * MINUTE_IN_SECONDS );
 	wp_safe_redirect( admin_url( 'themes.php?page=' . DLC_SETUP_PAGE ) );
 	exit;
 }
 add_action( 'admin_post_dlc_setup', 'dlc_setup_handle' );
+
+/**
+ * اجرای خودکار بعد از به‌روزرسانی قالب: اولین باری که مدیر سایت وارد پیشخوان شود،
+ * برگه‌های تازه ساخته و موارد بازنگری‌شده جایگزین می‌شوند. فقط یک‌بار برای هر نسخه.
+ */
+function dlc_setup_auto_run() {
+	if ( wp_doing_ajax() || wp_doing_cron() || ( defined( 'IFRAME_REQUEST' ) && IFRAME_REQUEST ) ) {
+		return;
+	}
+	if ( get_option( 'dlc_seed_version' ) === DLC_SEED_VERSION || ! current_user_can( 'manage_options' ) ) {
+		return;
+	}
+	// قبل از شروع ثبت می‌شود تا درخواست‌های هم‌زمان دوباره اجرا نکنند.
+	update_option( 'dlc_seed_version', DLC_SEED_VERSION );
+
+	$log = array();
+	dlc_setup_create_content( $log );
+
+	// تنظیمات سایت و رنگ‌ها فقط اگر تا حالا هیچ‌وقت تنظیم نشده‌اند.
+	if ( 'page' !== get_option( 'show_on_front' ) ) {
+		dlc_setup_site_settings( $log );
+	}
+	if ( false === get_option( 'astra-color-palettes', false ) ) {
+		dlc_setup_design( $log );
+	}
+
+	set_transient( 'dlc_setup_auto_log', $log, DAY_IN_SECONDS );
+}
+add_action( 'admin_init', 'dlc_setup_auto_run' );
+
+/**
+ * اعلان نتیجه‌ی اجرای خودکار (یک‌بار).
+ */
+function dlc_setup_auto_notice() {
+	if ( ! current_user_can( 'manage_options' ) ) {
+		return;
+	}
+	$log = get_transient( 'dlc_setup_auto_log' );
+	if ( ! is_array( $log ) || ! $log ) {
+		return;
+	}
+	delete_transient( 'dlc_setup_auto_log' );
+	echo '<div class="notice notice-success is-dismissible"><p><strong>راه‌اندازی خودکار قالب DLC انجام شد:</strong></p><ul style="list-style:disc;padding-inline-start:20px">';
+	foreach ( $log as $line ) {
+		echo '<li>' . esc_html( $line ) . '</li>';
+	}
+	echo '</ul></div>';
+}
+add_action( 'admin_notices', 'dlc_setup_auto_notice' );
+
+/**
+ * الگوی بلوکی «DLC — صفحه نخست» برای استفاده‌ی دوباره در ویرایشگر.
+ */
+function dlc_setup_register_pattern() {
+	if ( ! function_exists( 'register_block_pattern' ) ) {
+		return;
+	}
+	// الگوها فقط در پیشخوان و درخواست‌های REST ویرایشگر لازم‌اند، نه در بازدید عادی سایت.
+	$uri     = isset( $_SERVER['REQUEST_URI'] ) ? (string) wp_unslash( $_SERVER['REQUEST_URI'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+	$is_rest = false !== strpos( $uri, '/' . rest_get_url_prefix() . '/' ) || false !== strpos( $uri, 'rest_route=' );
+	if ( ! is_admin() && ! $is_rest ) {
+		return;
+	}
+	register_block_pattern_category( 'dlc', array( 'label' => 'DLC' ) );
+	register_block_pattern(
+		'dlc/front-page',
+		array(
+			'title'       => 'DLC — صفحه نخست',
+			'description' => 'چیدمان کامل صفحه‌ی نخست آموزشگاه.',
+			'categories'  => array( 'dlc' ),
+			'content'     => dlc_setup_content( 'front', array() ),
+		)
+	);
+}
+add_action( 'init', 'dlc_setup_register_pattern' );
 
 /**
  * صفحه‌ی پیشخوان: نمایش ← راه‌اندازی اولیه DLC.
@@ -374,7 +562,7 @@ function dlc_setup_render_page() {
 			</div>
 		<?php endif; ?>
 
-		<p>هر مورد فقط یک‌بار ساخته می‌شود. اگر دوباره دکمه را بزنید، چیزی که قبلاً ساخته شده (و ویرایش‌های شما) دست نمی‌خورد.</p>
+		<p>هر مورد فقط یک‌بار ساخته می‌شود. اگر دوباره دکمه را بزنید، چیزی که قبلاً ساخته شده (و ویرایش‌های شما) دست نمی‌خورد. بعد از هر به‌روزرسانی قالب، برگه‌های تازه خودکار ساخته می‌شوند.</p>
 
 		<table class="widefat striped" style="max-width:720px">
 			<thead><tr><th>مورد</th><th>نوع</th><th>وضعیت</th></tr></thead>
