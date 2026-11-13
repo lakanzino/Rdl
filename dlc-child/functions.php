@@ -73,3 +73,8 @@ require_once DLC_CHILD_DIR . 'inc/updater.php';
  * راه‌اندازی سایت: ساخت برگه‌ها، مقالات، فهرست، رنگ‌ها و الگوی بلوکی صفحه‌ی نخست.
  */
 require_once DLC_CHILD_DIR . 'inc/setup.php';
+
+/**
+ * توضیح متا (meta description) برای مقالات و برگه‌ها — فقط وقتی افزونه‌ی سئو نصب نیست.
+ */
+require_once DLC_CHILD_DIR . 'inc/seo.php';

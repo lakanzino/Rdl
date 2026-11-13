@@ -1,6 +1,7 @@
 /**
  * محتوای اولیه‌ی سایت را به شکل بلوک‌های معتبر گوتنبرگ می‌سازد و در dlc-child/content می‌نویسد.
  * اجرا:  npm i @wordpress/blocks @wordpress/block-library jsdom global-jsdom  &&  node tools/build-content.cjs
+ * (اگر بسته‌ها جای دیگری نصب‌اند: NODE_PATH=/path/to/node_modules node tools/build-content.cjs)
  */
 require('global-jsdom/register');
 const noop = class { observe() {} unobserve() {} disconnect() {} };
@@ -284,12 +285,23 @@ docs['post-levels'] = [
   p('وقتی سطحتان را بدانید، کلاس و منبع مناسب انتخاب می‌کنید و پیشرفتتان قابل اندازه‌گیری می‌شود. قدم اول، تعیین سطح است.'),
 ];
 
+/* ───────────── مقالات خوشه‌ی مهاجرت (فایل جدا) ───────────── */
+const linkTo = (key, text) => `<a href="{{url:${key}}}">${text}</a>`;
+Object.assign(docs, require('./articles-migration.cjs')({ h, p, ul, table, btns, btn, en, link: linkTo }));
+
+const words = (html) => html.replace(/<!--[\s\S]*?-->/g, ' ').replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length;
+const MIN_WORDS = { 'post-mig-': 1000 };
+
 let bad = 0;
 for (const [name, blocks] of Object.entries(docs)) {
   const html = serialize(blocks);
   const check = (bs) => bs.forEach((b) => { if (!b.isValid) { bad++; console.log('INVALID', name, b.name); } check(b.innerBlocks); });
   check(parse(html));
   fs.writeFileSync(path.join(OUT, name + '.html'), html + '\n');
-  console.log(name, html.length);
+  const wc = words(html);
+  for (const [prefix, min] of Object.entries(MIN_WORDS)) {
+    if (name.startsWith(prefix) && wc < min) { bad++; console.log('TOO SHORT', name, wc, '<', min); }
+  }
+  console.log(name, html.length, 'bytes,', wc, 'words');
 }
 process.exit(bad ? 1 : 0);

@@ -21,7 +21,7 @@ const DLC_SEED_REV   = '_dlc_seed_rev';
  * نسخه‌ی محتوای اولیه. با بالا رفتن این عدد، راه‌اندازی یک‌بار به‌طور خودکار
  * در پیشخوان اجرا می‌شود (ساخت برگه‌های تازه و جایگزینی مواردی که rev بالاتر دارند).
  */
-const DLC_SEED_VERSION = '2';
+const DLC_SEED_VERSION = '3';
 
 /**
  * پالت رنگ سایت به ترتیب ۹ خانه‌ی پالت سراسری آسترا.
@@ -113,6 +113,42 @@ function dlc_setup_items() {
 		'post-speaking'   => array( 'post', '۵ عادت روزانه برای تقویت مکالمه‌ی انگلیسی', 'daily-habits-for-english-speaking', 'post-speaking', 1 ),
 		'post-vocabulary' => array( 'post', 'چطور لغت‌های انگلیسی را فراموش نکنیم؟', 'how-to-remember-english-vocabulary', 'post-vocabulary', 1 ),
 		'post-levels'     => array( 'post', 'سطح‌های زبان انگلیسی از A1 تا C2 به زبان ساده', 'english-levels-cefr', 'post-levels', 1 ),
+
+		// خوشه‌ی «زبان انگلیسی برای مهاجرت» — شماره‌های ۱ تا ۳ از CONTENT-ROADMAP.md.
+		// عنصر ششم: دسته (نامک => نام) و خلاصه (که توضیح متای صفحه هم هست).
+		'post-mig-start'            => array(
+			'post',
+			'یادگیری زبان انگلیسی برای مهاجرت را از کجا شروع کنیم؟ (نقشه راه قدم‌به‌قدم)',
+			'learn-english-for-immigration-roadmap',
+			'post-mig-start',
+			1,
+			array(
+				'cat'     => array( 'english-for-immigration', 'زبان انگلیسی برای مهاجرت' ),
+				'excerpt' => 'برای مهاجرت، یادگیری زبان انگلیسی را از کجا شروع کنیم؟ راهنمای قدم‌به‌قدم: انتخاب مقصد و آزمون، سنجش سطح، برآورد زمان و چیدن برنامه‌ی هفتگی.',
+			),
+		),
+		'post-mig-british-american' => array(
+			'post',
+			'تفاوت انگلیسی بریتانیایی و آمریکایی؛ برای مهاجرت کدام را یاد بگیریم؟',
+			'british-vs-american-english-for-immigration',
+			'post-mig-british-american',
+			1,
+			array(
+				'cat'     => array( 'english-for-immigration', 'زبان انگلیسی برای مهاجرت' ),
+				'excerpt' => 'تفاوت انگلیسی بریتانیایی و آمریکایی در تلفظ، واژگان، املا و گرامر با جدول و مثال؛ و اینکه برای مهاجرت به هر کشور و برای آزمون‌ها کدام را انتخاب کنید.',
+			),
+		),
+		'post-mig-zero-to-ielts6'   => array(
+			'post',
+			'از صفر تا آیلتس ۶ چقدر طول می‌کشد؟ برآورد واقع‌بینانه',
+			'how-long-from-zero-to-ielts-6',
+			'post-mig-zero-to-ielts6',
+			1,
+			array(
+				'cat'     => array( 'english-for-immigration', 'زبان انگلیسی برای مهاجرت' ),
+				'excerpt' => 'از صفر تا آیلتس ۶ حدود ۵۰۰ تا ۶۰۰ ساعت آموزش لازم است. با جدول ببینید با ساعت هفتگی و سطح فعلی شما، این مسیر چند ماه طول می‌کشد.',
+			),
+		),
 	);
 }
 
@@ -154,10 +190,10 @@ function dlc_setup_content( $file, $ids ) {
 		return '';
 	}
 	$html = (string) file_get_contents( $path ); // phpcs:ignore WordPress.WP.AlternativeFunctions
-	foreach ( array( 'courses', 'contact', 'blog', 'about', 'faq', 'privacy', 'terms' ) as $key ) {
-		if ( false === strpos( $html, '{{url:' . $key . '}}' ) ) {
-			continue;
-		}
+	if ( ! preg_match_all( '/\{\{url:([a-z0-9-]+)\}\}/', $html, $matches ) ) {
+		return trim( $html );
+	}
+	foreach ( array_unique( $matches[1] ) as $key ) {
 		if ( empty( $ids[ $key ] ) ) {
 			$ids[ $key ] = dlc_setup_find( $key );
 		}
@@ -205,6 +241,7 @@ function dlc_setup_create_content( &$log ) {
 					'post_status'    => 'publish',
 					'post_author'    => $author,
 					'post_content'   => '',
+					'post_excerpt'   => isset( $item[5]['excerpt'] ) ? $item[5]['excerpt'] : '',
 					'comment_status' => 'post' === $type ? get_default_comment_status( 'post' ) : 'closed',
 					// ترتیب مقالات ثابت بماند.
 					'post_date'      => wp_date( 'Y-m-d H:i:s', time() - $n * MINUTE_IN_SECONDS ),
@@ -286,22 +323,18 @@ function dlc_setup_create_content( &$log ) {
 		update_post_meta( $created['front'], 'site-sidebar-layout', 'no-sidebar' );
 	}
 
-	// دسته‌ی مقالات.
-	$post_ids = array();
+	// دسته‌ی مقالات تازه‌ساخت.
 	foreach ( $created as $key => $id ) {
-		if ( 'post' === $items[ $key ][0] ) {
-			$post_ids[] = $id;
+		if ( 'post' !== $items[ $key ][0] ) {
+			continue;
 		}
-	}
-	if ( $post_ids ) {
-		$term = term_exists( 'learning-english', 'category' );
+		$cat  = isset( $items[ $key ][5]['cat'] ) ? $items[ $key ][5]['cat'] : array( 'learning-english', 'آموزش زبان انگلیسی' );
+		$term = term_exists( $cat[0], 'category' );
 		if ( ! $term ) {
-			$term = wp_insert_term( 'آموزش زبان انگلیسی', 'category', array( 'slug' => 'learning-english' ) );
+			$term = wp_insert_term( $cat[1], 'category', array( 'slug' => $cat[0] ) );
 		}
 		if ( ! is_wp_error( $term ) && ! empty( $term['term_id'] ) ) {
-			foreach ( $post_ids as $id ) {
-				wp_set_post_categories( $id, array( (int) $term['term_id'] ) );
-			}
+			wp_set_post_categories( $id, array( (int) $term['term_id'] ) );
 		}
 	}
 
