@@ -1,0 +1,235 @@
+/**
+ * DLC — فونت‌ها و استایل بلوک‌ها (هم در سایت و هم در ویرایشگر بارگذاری می‌شود).
+ */
+
+/* Vazirmatn: فارسی، اعداد و علائم — فونت متغیر 100 تا 900 */
+@font-face {
+	font-family: "Vazirmatn";
+	src: url("../fonts/Vazirmatn-wght.woff2") format("woff2");
+	font-weight: 100 900;
+	font-style: normal;
+	font-display: swap;
+}
+
+/* Courier Prime: فقط حروف لاتین (A-Z, a-z و حروف لاتینِ اعراب‌دار) */
+@font-face {
+	font-family: "Courier Prime";
+	src: url("../fonts/CourierPrime-Regular.woff2") format("woff2");
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+	unicode-range: U+0041-005A, U+0061-007A, U+00C0-00FF, U+0100-017F;
+}
+@font-face {
+	font-family: "Courier Prime";
+	src: url("../fonts/CourierPrime-Bold.woff2") format("woff2");
+	font-weight: 700 900;
+	font-style: normal;
+	font-display: swap;
+	unicode-range: U+0041-005A, U+0061-007A, U+00C0-00FF, U+0100-017F;
+}
+
+:root {
+	--dlc-font: "Courier Prime", "Vazirmatn", Tahoma, Arial, sans-serif;
+	--dlc-accent: #c8452f;
+	--dlc-accent-hover: #a93825;
+	--dlc-radius: 10px;
+}
+
+body,
+button,
+input,
+select,
+optgroup,
+textarea,
+h1, h2, h3, h4, h5, h6,
+.site-title,
+.site-description,
+.entry-title,
+.widget-title,
+.menu-link,
+.ast-button,
+.ast-custom-button,
+.wp-block-button__link,
+.wp-element-button,
+blockquote,
+figcaption,
+.editor-styles-wrapper,
+.editor-styles-wrapper :is(p, li, h1, h2, h3, h4, h5, h6, td, th, a, span) {
+	font-family: var(--dlc-font) !important;
+}
+
+body {
+	line-height: 1.9;
+}
+
+h1, h2, h3, h4, h5, h6,
+.entry-title {
+	line-height: 1.5;
+	letter-spacing: 0;
+}
+
+/* ───── کمک‌کلاس‌ها ───── */
+.dlc-center > *,
+.dlc-center-text {
+	text-align: center;
+}
+.dlc-center .wp-block-buttons,
+.dlc-buttons {
+	justify-content: center;
+}
+.dlc-buttons.dlc-start {
+	justify-content: flex-start;
+}
+.dlc-buttons {
+	margin-top: 1.75rem;
+}
+
+.dlc-lead {
+	font-size: 1.15rem;
+	max-width: 44rem;
+	margin-inline: auto;
+}
+.entry-content > .dlc-lead {
+	margin-inline: 0;
+	max-width: none;
+}
+
+.dlc-eyebrow {
+	font-size: 1rem;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	direction: ltr;
+	margin-bottom: 0.75rem;
+	opacity: 0.85;
+}
+.dlc-eyebrow::after {
+	content: "";
+	display: block;
+	width: 3rem;
+	height: 3px;
+	margin: 0.75rem auto 0;
+	background: var(--dlc-accent);
+}
+
+/* ───── قهرمان (Hero) ───── */
+.dlc-hero h1 {
+	font-size: clamp(1.9rem, 5vw, 3.1rem);
+	font-weight: 800;
+	margin-bottom: 1rem;
+}
+.dlc-hero .wp-block-buttons .wp-block-button.is-style-outline .wp-block-button__link {
+	color: #fff !important;
+	border-color: rgba(255, 255, 255, 0.7) !important;
+	background: transparent !important;
+}
+.dlc-hero .wp-block-buttons .wp-block-button.is-style-outline .wp-block-button__link:hover,
+.dlc-hero .wp-block-buttons .wp-block-button.is-style-outline .wp-block-button__link:focus {
+	background: #fff !important;
+	color: var(--ast-global-color-6, #14243a) !important;
+	border-color: #fff !important;
+}
+
+/* ───── دکمه‌ی تأکیدی ───── */
+.wp-block-button.is-style-dlc-accent .wp-block-button__link {
+	background: var(--dlc-accent);
+	border-color: var(--dlc-accent);
+	color: #fff;
+}
+.wp-block-button.is-style-dlc-accent .wp-block-button__link:hover,
+.wp-block-button.is-style-dlc-accent .wp-block-button__link:focus {
+	background: var(--dlc-accent-hover);
+	border-color: var(--dlc-accent-hover);
+	color: #fff;
+}
+.wp-block-button__link {
+	border-radius: var(--dlc-radius);
+}
+
+/* ───── کارت‌ها ───── */
+.wp-block-columns:has(> .dlc-card) {
+	margin-top: 2.25rem;
+	gap: 1.25rem;
+}
+.wp-block-column.dlc-card {
+	background: var(--ast-global-color-4, #fff);
+	border: 1px solid var(--ast-global-color-7, #e4dccb);
+	border-radius: var(--dlc-radius);
+	padding: 1.75rem 1.5rem;
+	text-align: center;
+}
+.dlc-card h3 {
+	font-size: 1.2rem;
+	margin-bottom: 0.5rem;
+}
+.dlc-card p:last-child {
+	margin-bottom: 0;
+}
+.dlc-level {
+	display: inline-block;
+	min-width: 3rem;
+	padding: 0.1rem 0.75rem;
+	margin-bottom: 0.75rem;
+	border-radius: 999px;
+	background: var(--dlc-accent);
+	color: #fff;
+	font-weight: 700;
+	direction: ltr;
+}
+
+/* ───── فهرست مقالات در صفحه نخست ───── */
+.dlc-posts.wp-block-latest-posts {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+	gap: 1.25rem;
+	margin-top: 2rem;
+	padding: 0;
+	list-style: none;
+}
+.dlc-posts.wp-block-latest-posts > li {
+	width: auto;
+	margin: 0;
+	background: var(--ast-global-color-4, #fff);
+	border: 1px solid var(--ast-global-color-7, #e4dccb);
+	border-radius: var(--dlc-radius);
+	padding: 1.5rem;
+}
+.dlc-posts .wp-block-latest-posts__post-title {
+	font-weight: 700;
+	font-size: 1.1rem;
+	text-decoration: none;
+}
+.dlc-posts .wp-block-latest-posts__post-date {
+	margin: 0.4rem 0;
+}
+
+/* ───── CTA ───── */
+.dlc-cta h2 {
+	font-size: clamp(1.3rem, 3vw, 1.8rem);
+}
+
+/* ───── جدول ───── */
+.wp-block-table.dlc-table table {
+	border-collapse: collapse;
+}
+.wp-block-table.dlc-table th,
+.wp-block-table.dlc-table td {
+	border: 1px solid var(--ast-global-color-7, #e4dccb);
+	padding: 0.75rem 1rem;
+	text-align: start;
+	vertical-align: top;
+}
+.wp-block-table.dlc-table thead th {
+	background: var(--ast-global-color-5, #faf6ee);
+	border-bottom-width: 2px;
+}
+.wp-block-table.dlc-table td:nth-child(-n+2) {
+	white-space: nowrap;
+}
+
+@media (max-width: 781px) {
+	.dlc-hero {
+		padding-top: 3.5rem !important;
+		padding-bottom: 3.5rem !important;
+	}
+}
