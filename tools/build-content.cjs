@@ -136,7 +136,7 @@ docs['courses'] = [
 /* ───────────── درباره ما ───────────── */
 docs['about'] = [
   p(en('DLC Language Center') + ' آموزشگاه زبان انگلیسی است؛ به‌زودی در دورود، لرستان.', { className: 'dlc-lead' }),
-  p('این آموزشگاه تحت مدیریت استاد یونس دلفان، مدرس زبان انگلیسی، انواع دوره‌های آموزش زبان انگلیسی را برگزار می‌کند.'),
+  p('این آموزشگاه تحت مدیریت استاد یونس دلفانی، مدرس زبان انگلیسی، انواع دوره‌های آموزش زبان انگلیسی را برگزار می‌کند.'),
   h(2, 'هدف ما'),
   p('می‌خواهیم زبان‌آموز بتواند انگلیسی را بفهمد و با اعتمادبه‌نفس صحبت کند. برای همین، هر کس از سطح مناسب خودش شروع می‌کند و قدم‌به‌قدم پیش می‌رود.'),
   h(2, 'دوره‌ها'),
@@ -289,8 +289,14 @@ docs['post-levels'] = [
 const linkTo = (key, text) => `<a href="{{url:${key}}}">${text}</a>`;
 Object.assign(docs, require('./articles-migration.cjs')({ h, p, ul, table, btns, btn, en, link: linkTo }));
 
-const words = (html) => html.replace(/<!--[\s\S]*?-->/g, ' ').replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length;
-const MIN_WORDS = { 'post-mig-': 1000 };
+/* ───────────── مقالات پایه (بازنویسی 1.4.0؛ فایل جدا) ───────────── */
+Object.assign(docs, require('./articles-basics.cjs')({ h, p, ul, table, btns, btn, en, link: linkTo }));
+// «از کجا شروع کنیم؟» در 1.4.0 حذف و به مقاله‌ی کامل‌ترِ post-mig-start منتقل (۳۰۱) شد.
+delete docs['post-start'];
+
+// شمارش سخت‌گیرانه (مثل wp_strip_all_tags): تگ‌ها بدون فاصله حذف می‌شوند، پس خانه‌های جدول به هم می‌چسبند.
+const words = (html) => html.replace(/<!--[\s\S]*?-->/g, '').replace(/<[^>]+>/g, '').split(/\s+/).filter(Boolean).length;
+const MIN_WORDS = { 'post-': 1000 };
 
 let bad = 0;
 for (const [name, blocks] of Object.entries(docs)) {

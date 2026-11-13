@@ -78,3 +78,8 @@ require_once DLC_CHILD_DIR . 'inc/setup.php';
  * توضیح متا (meta description) برای مقالات و برگه‌ها — فقط وقتی افزونه‌ی سئو نصب نیست.
  */
 require_once DLC_CHILD_DIR . 'inc/seo.php';
+
+/**
+ * نمایش مقالات: نام نویسنده، جعبه‌ی نویسنده، رفع «%آسترا%»، انتقال نشانی‌های حذف‌شده.
+ */
+require_once DLC_CHILD_DIR . 'inc/blog.php';
