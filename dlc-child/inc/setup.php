@@ -21,7 +21,7 @@ const DLC_SEED_REV   = '_dlc_seed_rev';
  * نسخه‌ی محتوای اولیه. با بالا رفتن این عدد، راه‌اندازی یک‌بار به‌طور خودکار
  * در پیشخوان اجرا می‌شود (ساخت برگه‌های تازه و جایگزینی مواردی که rev بالاتر دارند).
  */
-const DLC_SEED_VERSION = '3';
+const DLC_SEED_VERSION = '4';
 
 /**
  * پالت رنگ سایت به ترتیب ۹ خانه‌ی پالت سراسری آسترا.
@@ -104,15 +104,45 @@ function dlc_setup_items() {
 		'front'           => array( 'page', 'صفحه نخست', 'home', 'front', 2 ),
 		'courses'         => array( 'page', 'دوره‌ها و برنامه‌ی آموزشی', 'courses', 'courses', 1 ),
 		'blog'            => array( 'page', 'مقالات', 'blog', '', 1 ),
-		'about'           => array( 'page', 'درباره ما', 'about', 'about', 2 ),
+		'about'           => array( 'page', 'درباره ما', 'about', 'about', 3 ),
 		'contact'         => array( 'page', 'تماس با ما', 'contact', 'contact', 2 ),
 		'faq'             => array( 'page', 'پرسش‌های متداول', 'faq', 'faq', 1 ),
 		'privacy'         => array( 'page', 'سیاست حفظ حریم خصوصی', 'privacy', 'privacy', 1 ),
 		'terms'           => array( 'page', 'قوانین و مقررات', 'terms', 'terms', 1 ),
-		'post-start'      => array( 'post', 'یادگیری زبان انگلیسی را از کجا شروع کنیم؟', 'how-to-start-learning-english', 'post-start', 1 ),
-		'post-speaking'   => array( 'post', '۵ عادت روزانه برای تقویت مکالمه‌ی انگلیسی', 'daily-habits-for-english-speaking', 'post-speaking', 1 ),
-		'post-vocabulary' => array( 'post', 'چطور لغت‌های انگلیسی را فراموش نکنیم؟', 'how-to-remember-english-vocabulary', 'post-vocabulary', 1 ),
-		'post-levels'     => array( 'post', 'سطح‌های زبان انگلیسی از A1 تا C2 به زبان ساده', 'english-levels-cefr', 'post-levels', 1 ),
+		// «post-start» در 1.4.0 بازنشسته شد (dlc_setup_retired).
+		'post-speaking'   => array(
+			'post',
+			'۵ عادت روزانه برای تقویت مکالمه‌ی انگلیسی',
+			'daily-habits-for-english-speaking',
+			'post-speaking',
+			2,
+			array(
+				'excerpt' => 'پنج عادت روزانه برای تقویت مکالمه‌ی انگلیسی: بلندخوانی، سایه‌خوانی، حرف‌زدن با خود، ضبط صدا و گفت‌وگوی واقعی؛ با برنامه‌ی سی‌دقیقه‌ای.',
+				'alt'     => 'تصویر شاخص مقاله‌ی پنج عادت روزانه برای تقویت مکالمه‌ی انگلیسی',
+			),
+		),
+		'post-vocabulary' => array(
+			'post',
+			'چطور لغت‌های انگلیسی را فراموش نکنیم؟',
+			'how-to-remember-english-vocabulary',
+			'post-vocabulary',
+			2,
+			array(
+				'excerpt' => 'برای فراموش‌نکردن لغت‌های انگلیسی: واژه را در جمله یاد بگیرید، با فاصله مرور کنید و خودتان با آن جمله بسازید. برنامه‌ی مرور و جعبه‌ی لایتنر.',
+				'alt'     => 'تصویر شاخص مقاله‌ی چطور لغت‌های انگلیسی را فراموش نکنیم',
+			),
+		),
+		'post-levels'     => array(
+			'post',
+			'سطح‌های زبان انگلیسی از A1 تا C2 به زبان ساده',
+			'english-levels-cefr',
+			'post-levels',
+			2,
+			array(
+				'excerpt' => 'سطح‌های زبان انگلیسی از A1 تا C2 (چارچوب CEFR) به زبان ساده: توانایی‌های هر سطح، ساعت آموزش لازم و نمره‌ی تقریبی آیلتس برای هر سطح.',
+				'alt'     => 'تصویر شاخص مقاله‌ی سطح‌های زبان انگلیسی از A1 تا C2',
+			),
+		),
 
 		// خوشه‌ی «زبان انگلیسی برای مهاجرت» — شماره‌های ۱ تا ۳ از CONTENT-ROADMAP.md.
 		// عنصر ششم: دسته (نامک => نام) و خلاصه (که توضیح متای صفحه هم هست).
@@ -125,6 +155,7 @@ function dlc_setup_items() {
 			array(
 				'cat'     => array( 'english-for-immigration', 'زبان انگلیسی برای مهاجرت' ),
 				'excerpt' => 'برای مهاجرت، یادگیری زبان انگلیسی را از کجا شروع کنیم؟ راهنمای قدم‌به‌قدم: انتخاب مقصد و آزمون، سنجش سطح، برآورد زمان و چیدن برنامه‌ی هفتگی.',
+				'alt'     => 'تصویر شاخص مقاله‌ی شروع یادگیری زبان انگلیسی برای مهاجرت',
 			),
 		),
 		'post-mig-british-american' => array(
@@ -136,6 +167,7 @@ function dlc_setup_items() {
 			array(
 				'cat'     => array( 'english-for-immigration', 'زبان انگلیسی برای مهاجرت' ),
 				'excerpt' => 'تفاوت انگلیسی بریتانیایی و آمریکایی در تلفظ، واژگان، املا و گرامر با جدول و مثال؛ و اینکه برای مهاجرت به هر کشور و برای آزمون‌ها کدام را انتخاب کنید.',
+				'alt'     => 'تصویر شاخص مقاله‌ی تفاوت انگلیسی بریتانیایی و آمریکایی',
 			),
 		),
 		'post-mig-zero-to-ielts6'   => array(
@@ -147,9 +179,75 @@ function dlc_setup_items() {
 			array(
 				'cat'     => array( 'english-for-immigration', 'زبان انگلیسی برای مهاجرت' ),
 				'excerpt' => 'از صفر تا آیلتس ۶ حدود ۵۰۰ تا ۶۰۰ ساعت آموزش لازم است. با جدول ببینید با ساعت هفتگی و سطح فعلی شما، این مسیر چند ماه طول می‌کشد.',
+				'alt'     => 'تصویر شاخص مقاله‌ی از صفر تا آیلتس ۶ چقدر طول می‌کشد',
 			),
 		),
 	);
+}
+
+/**
+ * موارد بازنشسته: کلید قدیمی => array( نامک قدیمی، کلید مقاله‌ی جایگزین ).
+ * نوشته به زباله‌دان می‌رود و نشانی قدیمی با ۳۰۱ به جایگزین می‌رود (inc/blog.php).
+ */
+function dlc_setup_retired() {
+	return array(
+		'post-start' => array( 'how-to-start-learning-english', 'post-mig-start' ),
+	);
+}
+
+/**
+ * تصویر شاخص: assets/img/cover-<key>.jpg یک بار به کتابخانه‌ی رسانه افزوده و به نوشته وصل می‌شود.
+ * اگر نوشته از قبل تصویر شاخص دارد، دست نمی‌خورد.
+ *
+ * @return bool آیا تصویر تازه‌ای وصل شد.
+ */
+function dlc_setup_cover( $key, $post_id, $alt ) {
+	if ( has_post_thumbnail( $post_id ) ) {
+		return false;
+	}
+	$file = DLC_CHILD_DIR . 'assets/img/cover-' . $key . '.jpg';
+	if ( ! is_readable( $file ) ) {
+		return false;
+	}
+
+	// اگر قبلاً همین تصویر افزوده شده، دوباره بارگذاری نشود.
+	$found = get_posts(
+		array(
+			'post_type'   => 'attachment',
+			'post_status' => 'inherit',
+			'meta_key'    => DLC_SEED_META, // phpcs:ignore WordPress.DB.SlowDBQuery
+			'meta_value'  => 'cover-' . $key, // phpcs:ignore WordPress.DB.SlowDBQuery
+			'numberposts' => 1,
+			'fields'      => 'ids',
+		)
+	);
+	if ( $found ) {
+		return (bool) set_post_thumbnail( $post_id, (int) $found[0] );
+	}
+
+	$upload = wp_upload_bits( 'dlc-cover-' . $key . '.jpg', null, (string) file_get_contents( $file ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions
+	if ( ! empty( $upload['error'] ) ) {
+		return false;
+	}
+	$attachment_id = wp_insert_attachment(
+		wp_slash(
+			array(
+				'post_mime_type' => 'image/jpeg',
+				'post_title'     => $alt,
+				'post_status'    => 'inherit',
+			)
+		),
+		$upload['file'],
+		$post_id
+	);
+	if ( ! $attachment_id || is_wp_error( $attachment_id ) ) {
+		return false;
+	}
+	require_once ABSPATH . 'wp-admin/includes/image.php';
+	wp_update_attachment_metadata( $attachment_id, wp_generate_attachment_metadata( $attachment_id, $upload['file'] ) );
+	update_post_meta( $attachment_id, '_wp_attachment_image_alt', $alt );
+	update_post_meta( $attachment_id, DLC_SEED_META, 'cover-' . $key );
+	return (bool) set_post_thumbnail( $post_id, $attachment_id );
 }
 
 /**
@@ -286,6 +384,7 @@ function dlc_setup_create_content( &$log ) {
 				array(
 					'ID'           => $id,
 					'post_content' => $content,
+					'post_excerpt' => isset( $items[ $key ][5]['excerpt'] ) ? $items[ $key ][5]['excerpt'] : get_post_field( 'post_excerpt', $id, 'raw' ),
 				)
 			),
 			true
@@ -338,7 +437,89 @@ function dlc_setup_create_content( &$log ) {
 		}
 	}
 
+	// موارد بازنشسته به زباله‌دان می‌روند (نشانی قدیمی‌شان ۳۰۱ می‌شود).
+	foreach ( dlc_setup_retired() as $key => $info ) {
+		$old = dlc_setup_find( $key );
+		if ( $old && 'trash' !== get_post_status( $old ) && wp_trash_post( $old ) ) {
+			$log[] = 'حذف شد و به مقاله‌ی کامل‌تر منتقل شد: ' . get_the_title( $old );
+		}
+	}
+
+	// تصویر شاخص مقالات.
+	foreach ( $items as $key => $item ) {
+		if ( 'post' === $item[0] && ! empty( $ids[ $key ] ) && 'trash' !== get_post_status( $ids[ $key ] ) ) {
+			$alt = isset( $item[5]['alt'] ) ? $item[5]['alt'] : $item[1];
+			if ( dlc_setup_cover( $key, $ids[ $key ], $alt ) ) {
+				$log[] = 'تصویر شاخص افزوده شد: ' . $item[1];
+			}
+		}
+	}
+
+	dlc_setup_default_category( $log );
+	dlc_setup_single_image( $log );
+
 	return $ids;
+}
+
+/**
+ * نمایش تصویر شاخص بالای مقاله‌ی تکی (پیش‌فرض آسترا: خاموش).
+ * فقط اگر این تنظیم در سفارشی‌سازی دست نخورده باشد.
+ */
+function dlc_setup_single_image( &$log ) {
+	$settings = get_option( 'astra-settings', array() );
+	if ( ! is_array( $settings ) || isset( $settings['ast-dynamic-single-post-structure'] ) ) {
+		return;
+	}
+	$settings['ast-dynamic-single-post-structure']                              = array(
+		'ast-dynamic-single-post-image',
+		'ast-dynamic-single-post-title',
+		'ast-dynamic-single-post-meta',
+	);
+	$settings['ast-dynamic-single-post-article-featured-image-position-layout-1'] = 'none';
+	update_option( 'astra-settings', $settings );
+	$log[] = 'نمایش تصویر شاخص در صفحه‌ی مقاله روشن شد.';
+}
+
+/**
+ * دسته‌ی پیش‌فرض: «آموزش زبان انگلیسی» پیش‌فرض می‌شود؛ دسته‌ی پیش‌فرض قبلی
+ * («دسته‌بندی نشده» / «وبلاگ») حذف و نوشته‌هایی که فقط در آن بودند به زباله‌دان می‌روند.
+ * فقط یک بار اثر دارد: بعد از آن دسته‌ی پیش‌فرض همان دسته‌ی خودمان است.
+ */
+function dlc_setup_default_category( &$log ) {
+	$ours = get_term_by( 'slug', 'learning-english', 'category' );
+	if ( ! $ours ) {
+		return;
+	}
+	$old = (int) get_option( 'default_category' );
+	if ( $old === (int) $ours->term_id ) {
+		return;
+	}
+	update_option( 'default_category', (int) $ours->term_id );
+	if ( ! $old || ! term_exists( $old, 'category' ) ) {
+		return;
+	}
+	$posts = get_posts(
+		array(
+			'post_type'   => 'post',
+			'post_status' => 'any',
+			'category'    => $old,
+			'numberposts' => -1,
+			'fields'      => 'ids',
+		)
+	);
+	foreach ( $posts as $post_id ) {
+		if ( '' !== (string) get_post_meta( $post_id, DLC_SEED_META, true ) || count( wp_get_post_categories( $post_id ) ) > 1 ) {
+			continue;
+		}
+		$title = get_the_title( $post_id );
+		if ( wp_trash_post( $post_id ) ) {
+			$log[] = 'نوشته‌ی دسته‌ی پیش‌فرض قدیمی به زباله‌دان رفت: ' . $title;
+		}
+	}
+	$name = get_term_field( 'name', $old, 'category' );
+	if ( true === wp_delete_term( $old, 'category' ) ) {
+		$log[] = 'دسته‌ی «' . $name . '» حذف شد؛ دسته‌ی پیش‌فرض: «آموزش زبان انگلیسی».';
+	}
 }
 
 /**

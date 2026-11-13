@@ -347,3 +347,30 @@ h1, h2, h3, h4, h5, h6,
 .wp-block-table.dlc-table {
 	overflow-x: auto;
 }
+
+/* ───── جعبه‌ی نویسنده در پایان مقاله ───── */
+.dlc-author {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: 0.35rem 0.75rem;
+	margin-top: 2.5rem;
+	padding: 1rem 1.25rem;
+	border: 1px solid var(--ast-global-color-7, #e4dccb);
+	border-radius: var(--dlc-radius);
+	background: var(--ast-global-color-5, #faf6ee);
+}
+
+.dlc-author__label {
+	font-size: 0.85rem;
+	color: var(--ast-global-color-3, #3f4a5a);
+}
+
+.dlc-author__label::after {
+	content: ":";
+}
+
+.dlc-author__role {
+	font-size: 0.9rem;
+	color: var(--ast-global-color-3, #3f4a5a);
+}
