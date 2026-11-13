@@ -233,3 +233,98 @@ h1, h2, h3, h4, h5, h6,
 		padding-bottom: 3.5rem !important;
 	}
 }
+
+/* ───── قهرمان دوستونه (نسخه‌ی 1.2.0) ───── */
+.dlc-hero-cols {
+	gap: 3rem;
+	margin-bottom: 0;
+}
+.dlc-hero-cols .dlc-eyebrow {
+	text-align: right;
+}
+.dlc-hero-cols .dlc-eyebrow::after {
+	margin: 0.75rem 0 0 auto;
+}
+.dlc-hero-cols .dlc-lead {
+	margin-inline: 0;
+}
+.dlc-paper {
+	direction: ltr;
+	text-align: left;
+	background: #faf6ee;
+	color: #14243a;
+	border-radius: 6px;
+	padding: 2rem 2rem 1.75rem;
+	max-width: 24rem;
+	margin-inline: auto;
+	transform: rotate(-2deg);
+	box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+	border-top: 6px solid var(--dlc-accent);
+}
+.dlc-paper p {
+	font-size: 1.25rem;
+	line-height: 1.6;
+	margin: 0 0 0.6rem;
+	color: inherit;
+}
+.dlc-paper p:last-child {
+	margin-bottom: 0;
+}
+.dlc-paper p:last-child::after {
+	content: "▌";
+	color: var(--dlc-accent);
+	margin-left: 0.15em;
+}
+
+/* ───── سه قدم ───── */
+.dlc-step {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 3rem;
+	height: 3rem;
+	margin-bottom: 0.75rem;
+	border: 2px solid var(--dlc-accent);
+	border-radius: 50%;
+	color: var(--dlc-accent);
+	font-size: 1.3rem;
+	font-weight: 800;
+	line-height: 1;
+}
+
+/* ───── پرسش‌های متداول ───── */
+.wp-block-details.dlc-faq {
+	border: 1px solid var(--ast-global-color-7, #e4dccb);
+	border-radius: var(--dlc-radius);
+	padding: 1rem 1.25rem;
+	margin-bottom: 0.75rem;
+	background: var(--ast-global-color-4, #fff);
+}
+.wp-block-details.dlc-faq summary {
+	cursor: pointer;
+	font-weight: 700;
+	color: var(--ast-global-color-2, #14243a);
+}
+.wp-block-details.dlc-faq[open] summary {
+	margin-bottom: 0.75rem;
+}
+.wp-block-details.dlc-faq > :last-child {
+	margin-bottom: 0;
+}
+
+@media (max-width: 781px) {
+	.dlc-hero-cols {
+		gap: 2.5rem;
+	}
+	.dlc-hero-cols .dlc-eyebrow,
+	.dlc-hero-cols h1,
+	.dlc-hero-cols .dlc-lead {
+		text-align: center;
+	}
+	.dlc-hero-cols .dlc-eyebrow::after {
+		margin: 0.75rem auto 0;
+	}
+	.dlc-hero-cols .dlc-buttons.dlc-start {
+		justify-content: center;
+	}
+}

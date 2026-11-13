@@ -70,8 +70,6 @@ add_action( 'init', 'dlc_child_register_block_styles' );
 require_once DLC_CHILD_DIR . 'inc/updater.php';
 
 /**
- * راه‌اندازی اولیه‌ی سایت (ساخت برگه‌ها، مقالات، فهرست و رنگ‌ها) — فقط در پیشخوان.
+ * راه‌اندازی سایت: ساخت برگه‌ها، مقالات، فهرست، رنگ‌ها و الگوی بلوکی صفحه‌ی نخست.
  */
-if ( is_admin() ) {
-	require_once DLC_CHILD_DIR . 'inc/setup.php';
-}
+require_once DLC_CHILD_DIR . 'inc/setup.php';
